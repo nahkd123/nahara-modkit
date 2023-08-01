@@ -8,6 +8,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
@@ -18,7 +19,6 @@ import javax.tools.Diagnostic.Kind;
 import com.google.auto.service.AutoService;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.stream.JsonWriter;
 
 import nahara.modkit.annotations.v1.AutoMixin;
 import nahara.modkit.annotations.v1.EntryPoint;
@@ -28,16 +28,19 @@ import net.fabricmc.api.ModInitializer;
 
 @SupportedAnnotationTypes("nahara.modkit.annotations.v1.*")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
+@SupportedOptions("nahara.modkit.expand")
 @AutoService(Processor.class)
 public class NaharaModkitAnnotationProcessor extends AbstractProcessor {
 	private ModProcessingInfo modProcessingInfo;
+	private Expander expander;
 
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
 		modProcessingInfo = new ModProcessingInfo();
 
-		System.out.println(processingEnv.getOptions());
+		var expandString = processingEnv.getOptions().get("nahara.modkit.expand");
+		expander = expandString != null? new Expander(expandString) : new Expander();
 	}
 
 	@Override
@@ -97,9 +100,10 @@ public class NaharaModkitAnnotationProcessor extends AbstractProcessor {
 
 	private void createJsonResource(String path, JsonElement json) {
 		try {
+			var gson = new GsonBuilder().disableHtmlEscaping().create(); // TODO cache this somewhere?
 			var fileObj = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", path);
-			var writer = new JsonWriter(fileObj.openWriter());
-			new GsonBuilder().disableHtmlEscaping().create().toJson(json, writer);
+			var writer = fileObj.openWriter();
+			writer.append(expander.process(gson.toJson(json)));
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();

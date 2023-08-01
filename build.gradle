@@ -24,6 +24,10 @@ allprojects {
         }
     }
 
+    compileJava {
+        options.compilerArgs << "-Anahara.modkit.expand=version:${project.version}"
+    }
+
     loom {
         splitEnvironmentSourceSets()
     }
