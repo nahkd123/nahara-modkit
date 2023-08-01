@@ -1,0 +1,13 @@
+plugins {
+}
+
+repositories {
+    maven { url = 'https://jitpack.io/' }
+}
+
+dependencies {
+    implementation annotationProcessor(project(path: ':annotations-v1', configuration: "namedElements"))
+
+    modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_version"
+    implementation include(project(path: ':scheduler-v1', configuration: "namedElements"))
+}

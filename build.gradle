@@ -1,0 +1,50 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'fabric-loom' version '1.3-SNAPSHOT' apply false
+}
+
+allprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'eclipse'
+    apply plugin: 'fabric-loom'
+
+    version = rootProject.mod_version
+    group = rootProject.maven_group
+
+    base {
+        archivesName = "${rootProject.archives_base_name}-${project.name}"
+    }
+
+    java {
+        withSourcesJar()
+
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    loom {
+        splitEnvironmentSourceSets()
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:$rootProject.minecraft_version"
+        mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+        modApi "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+    }
+
+    processResources {
+        inputs.property "version", project.version
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version
+        }
+    }
+}
+
+subprojects {
+    eclipse {
+        project.name = "Nahara Modkit - ${Character.toUpperCase(project.name.charAt(0))}${project.name.substring(1).replace('-', ' ')}"
+    }
+}

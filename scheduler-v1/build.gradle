@@ -1,0 +1,12 @@
+plugins {
+}
+
+repositories {
+    maven { url = 'https://jitpack.io/' }
+}
+
+dependencies {
+    implementation annotationProcessor(project(path: ':annotations-v1', configuration: "namedElements"))
+
+    api include('com.github.nahkd123.nahara-toolkit:nahara-common-tasks:main-SNAPSHOT')
+}
