@@ -3,16 +3,18 @@ package nahara.modkit.annotations.v1.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.fabricmc.loader.api.metadata.ModEnvironment;
+
 public class ModMixinsInfo {
-	public final boolean isClient;
+	private ModEnvironment env;
 	public final List<String> mixins = new ArrayList<>();
 
-	public ModMixinsInfo(boolean isClient) {
-		this.isClient = isClient;
+	public ModMixinsInfo(ModEnvironment env) {
+		this.env = env;
 	}
 
 	public ComputedMixins compute(String modid) {
-		var out = new ComputedMixins(modid, isClient);
+		var out = new ComputedMixins(modid, env);
 		mixins.forEach(v -> {
 			var splits = v.split("\\.");
 			out.findCommonPackage(v.substring(0, v.length() - splits[splits.length - 1].length() - 1));

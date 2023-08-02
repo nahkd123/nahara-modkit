@@ -12,7 +12,7 @@ import net.minecraft.server.MinecraftServer;
 		version = "${version}",
 		license = "MIT")
 @Dependencies({
-	@Dependency("fabricloader"),
+	@Dependency(value = "fabricloader"),
 	@Dependency(value = "minecraft", version = ">=1.20"),
 	@Dependency(value = "java", version = ">=17")
 })

@@ -17,14 +17,17 @@ public class ModProcessingInfo {
 	public final List<Dependency> dependencies = new ArrayList<>();
 	public final List<String> commonEntryPoints = new ArrayList<>();
 	public final List<String> clientEntryPoints = new ArrayList<>();
-	public final ModMixinsInfo commonMixins = new ModMixinsInfo(false);
-	public final ModMixinsInfo clientMixins = new ModMixinsInfo(true);
+	public final List<String> serverEntryPoints = new ArrayList<>();
+	public final ModMixinsInfo commonMixins = new ModMixinsInfo(ModEnvironment.UNIVERSAL);
+	public final ModMixinsInfo clientMixins = new ModMixinsInfo(ModEnvironment.CLIENT);
+	public final ModMixinsInfo serverMixins = new ModMixinsInfo(ModEnvironment.SERVER);
 
-	public ComputedMixins computedCommonMixins, computedClientMixins;
+	public ComputedMixins computedCommonMixins, computedClientMixins, computedServerMixins;
 
 	public void finalizeProcessing() {
 		computedCommonMixins = commonMixins.compute(modIndex.modid());
 		computedClientMixins = clientMixins.compute(modIndex.modid());
+		computedServerMixins = serverMixins.compute(modIndex.modid());
 	}
 
 	public Optional<JsonObject> createIndex() {
@@ -48,12 +51,18 @@ public class ModProcessingInfo {
 		var entryPoints = new JsonObject();
 		entryPoints.add("main", commonEntryPoints.stream().collect(() -> new JsonArray(), (arr, str) -> arr.add(str), (a, b) -> a.addAll(b)));
 		entryPoints.add("client", clientEntryPoints.stream().collect(() -> new JsonArray(), (arr, str) -> arr.add(str), (a, b) -> a.addAll(b)));
+		entryPoints.add("server", serverEntryPoints.stream().collect(() -> new JsonArray(), (arr, str) -> arr.add(str), (a, b) -> a.addAll(b)));
 		root.add("entrypoints", entryPoints);
 
 		var mixins = new JsonArray();
 		computedCommonMixins.createForIndex().ifPresent(mixins::add);
 		computedClientMixins.createForIndex().ifPresent(mixins::add);
-		if (computedCommonMixins.getFlattenMixins().size() > 0 || computedClientMixins.getFlattenMixins().size() > 0) {
+		computedServerMixins.createForIndex().ifPresent(mixins::add);
+
+		if (
+				computedCommonMixins.getFlattenMixins().size() > 0 ||
+				computedClientMixins.getFlattenMixins().size() > 0 ||
+				computedServerMixins.getFlattenMixins().size() > 0) {
 			root.add("mixins", mixins);
 		}
 

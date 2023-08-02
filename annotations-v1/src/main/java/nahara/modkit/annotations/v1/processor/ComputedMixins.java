@@ -12,23 +12,25 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import net.fabricmc.loader.api.metadata.ModEnvironment;
+
 public class ComputedMixins {
 	private String commonPackage;
 	private List<String> flattenMixins = new ArrayList<>();
 	private String modid;
-	private boolean isClient;
+	private ModEnvironment env;
 
-	public ComputedMixins(String modid, boolean isClient) {
+	public ComputedMixins(String modid, ModEnvironment env) {
 		this.modid = modid;
-		this.isClient = isClient;
+		this.env = env;
 	}
 
 	public String getModid() {
 		return modid;
 	}
 
-	public boolean isClient() {
-		return isClient;
+	public ModEnvironment getEnv() {
+		return env;
 	}
 
 	public String getCommonPackage() {
@@ -73,16 +75,20 @@ public class ComputedMixins {
 		if (flattenMixins.isEmpty()) return Optional.empty();
 
 		var config = new JsonPrimitive(getConfigName());
-		if (!isClient) return Optional.of(config);
+		if (env == ModEnvironment.UNIVERSAL) return Optional.of(config);
 
 		var root = new JsonObject();
 		root.add("config", config);
-		root.addProperty("environment", "client");
+		root.addProperty("environment", env.toString().toLowerCase());
 		return Optional.of(root);
 	}
 
 	public String getConfigName() {
-		return modid + "." + (isClient? "client." : "") + "mixins.json";
+		return modid + "." + (switch (env) {
+		case CLIENT -> "client.";
+		case SERVER -> "server.";
+		default -> "";
+		}) + "mixins.json";
 	}
 
 	public Optional<JsonObject> createConfig(SourceVersion version) {
@@ -92,7 +98,11 @@ public class ComputedMixins {
 		root.addProperty("required", true);
 		root.addProperty("package", commonPackage);
 		root.addProperty("compatibilityLevel", version.toString().replace("RELEASE", "JAVA"));
-		root.add("mixins", flattenMixins.stream().collect(() -> new JsonArray(), (arr, e) -> arr.add(e), (a, b) -> a.addAll(b)));
+		root.add(switch (env) {
+		case CLIENT -> "client";
+		case SERVER -> "server";
+		default -> "mixins";
+		}, flattenMixins.stream().collect(() -> new JsonArray(), (arr, e) -> arr.add(e), (a, b) -> a.addAll(b)));
 
 		var injectors = new JsonObject();
 		injectors.addProperty("defaultRequire", 1);

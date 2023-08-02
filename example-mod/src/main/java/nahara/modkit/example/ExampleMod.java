@@ -39,4 +39,9 @@ public class ExampleMod implements ModInitializer {
 			}));
 		});
 	}
+
+	@EntryPoint
+	public static void myEntryPoint() {
+		LOGGER.info("very sus entry point indeed. no more ModInitializer");
+	}
 }

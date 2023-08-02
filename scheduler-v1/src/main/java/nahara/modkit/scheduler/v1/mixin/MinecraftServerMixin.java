@@ -13,7 +13,7 @@ import nahara.modkit.scheduler.v1.Scheduler;
 import nahara.modkit.scheduler.v1.SchedulerProvider;
 import net.minecraft.server.MinecraftServer;
 
-@AutoMixin(isClient = false)
+@AutoMixin
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements SchedulerProvider {
 	@Unique private Scheduler scheduler$scheduler;

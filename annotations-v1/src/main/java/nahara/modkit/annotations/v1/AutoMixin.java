@@ -7,12 +7,19 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import net.fabricmc.loader.api.metadata.ModEnvironment;
+
 /**
- * <p>Annotate your class with this annotation to automagically include it inside {@code fabric.mod.json}.</p>
+ * <p>Annotate your class with this annotation to automagically include it inside {@code fabric.mod.json}
+ * and {@code <ID>.mixins.json}</p>
  */
 @Documented
 @Retention(SOURCE)
 @Target(TYPE)
 public @interface AutoMixin {
-	public boolean isClient();
+	/**
+	 * <p>The environment to include this mixin. If this value is {@link ModEnvironment#UNIVERSAL} (which is
+	 * by default), it will be applied on both server and client.</p>
+	 */
+	public ModEnvironment environment() default ModEnvironment.UNIVERSAL;
 }
