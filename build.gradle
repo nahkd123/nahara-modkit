@@ -3,12 +3,14 @@ plugins {
     id 'eclipse'
     id 'fabric-loom' version '1.3-SNAPSHOT' apply false
     id 'com.diffplug.eclipse.apt' version '3.42.2'
+    id 'maven-publish' apply false
 }
 
 allprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     apply plugin: 'com.diffplug.eclipse.apt'
+    apply plugin: 'maven-publish'
 
     version = rootProject.mod_version
     group = rootProject.maven_group
