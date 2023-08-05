@@ -25,6 +25,10 @@ allprojects {
         }
     }
 
+    repositories {
+        maven { url = 'https://jitpack.io/' }
+    }
+
     // Don't apply Fabric Loom to annotation processor
     if (!project.name.startsWith('annotations-')) {
         apply plugin: 'fabric-loom'
@@ -62,5 +66,19 @@ subprojects {
         project.name = "Nahara Modkit - ${Character.toUpperCase(project.name.charAt(0))}${project.name.substring(1).replace('-', ' ')}"
 
         synchronizationTasks 'eclipseFactorypath'
+    }
+}
+
+// Run thing haha yes
+dependencies {
+    modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_version"
+    implementation annotationProcessor(project(':annotations-v1'))
+}
+
+subprojects.each { p ->
+    if (p.name.startsWith('annotations-')) return;
+
+    dependencies {
+        implementation include(project(path: p.name, configuration: 'namedElements'))
     }
 }
