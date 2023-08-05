@@ -29,4 +29,11 @@ public class ResolveLater<T> {
 	public <R> ResolveLater<R> map(Function<T, R> mapper) {
 		return new ResolveLater<>(() -> tryResolve().map(mapper));
 	}
+
+	public ResolveLater<T> or(Supplier<T> supplier) {
+		return new ResolveLater<T>(() -> {
+			if (resolved == null) return Optional.ofNullable(supplier.get());
+			return tryResolve();
+		});
+	}
 }

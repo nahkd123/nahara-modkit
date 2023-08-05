@@ -2,11 +2,13 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'fabric-loom' version '1.3-SNAPSHOT' apply false
+    id 'com.diffplug.eclipse.apt' version '3.42.2'
 }
 
 allprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
+    apply plugin: 'com.diffplug.eclipse.apt'
 
     version = rootProject.mod_version
     group = rootProject.maven_group
@@ -58,5 +60,7 @@ allprojects {
 subprojects {
     eclipse {
         project.name = "Nahara Modkit - ${Character.toUpperCase(project.name.charAt(0))}${project.name.substring(1).replace('-', ' ')}"
+
+        synchronizationTasks 'eclipseFactorypath'
     }
 }
