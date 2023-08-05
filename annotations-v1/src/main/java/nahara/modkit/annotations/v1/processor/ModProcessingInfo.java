@@ -10,6 +10,7 @@ import com.google.gson.JsonPrimitive;
 
 import nahara.modkit.annotations.v1.Dependency;
 import nahara.modkit.annotations.v1.Mod;
+import nahara.modkit.annotations.v1.processor.autoreg.EntryPointGenerator;
 import net.fabricmc.loader.api.metadata.ModEnvironment;
 
 public class ModProcessingInfo {
@@ -21,10 +22,17 @@ public class ModProcessingInfo {
 	public final ModMixinsInfo commonMixins = new ModMixinsInfo(ModEnvironment.UNIVERSAL);
 	public final ModMixinsInfo clientMixins = new ModMixinsInfo(ModEnvironment.CLIENT);
 	public final ModMixinsInfo serverMixins = new ModMixinsInfo(ModEnvironment.SERVER);
+	public final EntryPointGenerator entryPointGenerator;
 
 	public ComputedMixins computedCommonMixins, computedClientMixins, computedServerMixins;
 
+	public ModProcessingInfo(ModClasses classes) {
+		entryPointGenerator = new EntryPointGenerator(this, classes);
+	}
+
 	public void finalizeProcessing() {
+		if (entryPointGenerator.shouldMakeClass()) commonEntryPoints.add(entryPointGenerator.getEntryPointPath());
+
 		computedCommonMixins = commonMixins.compute(modIndex.modid());
 		computedClientMixins = clientMixins.compute(modIndex.modid());
 		computedServerMixins = serverMixins.compute(modIndex.modid());
