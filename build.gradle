@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'fabric-loom' version '1.3-SNAPSHOT' apply false
     id 'com.diffplug.eclipse.apt' version '3.42.2'
-    id 'maven-publish' apply false
+    id 'maven-publish'
 }
 
 allprojects {
@@ -24,6 +24,21 @@ allprojects {
 
         toolchain {
             languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = rootProject.maven_group
+                artifactId = "nahara-modkit-${project.name}"
+                version = "${rootProject.mod_version}-SNAPSHOT"
+                from components.java
+            }
+        }
+
+        repositories {
+            mavenLocal()
         }
     }
 
