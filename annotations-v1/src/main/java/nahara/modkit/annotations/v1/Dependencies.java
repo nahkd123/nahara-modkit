@@ -7,6 +7,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * <p>Declare a list of dependencies that your mod requires.</p>
+ */
 @Documented
 @Retention(SOURCE)
 @Target(TYPE)

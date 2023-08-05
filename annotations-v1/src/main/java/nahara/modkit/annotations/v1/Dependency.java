@@ -9,5 +9,10 @@ import java.lang.annotation.Retention;
 @Retention(SOURCE)
 public @interface Dependency {
 	public String value();
+
+	/**
+	 * <p>Dependency version that follows semver format.</p>
+	 * @return Dependency version.
+	 */
 	public String version() default "*";
 }
