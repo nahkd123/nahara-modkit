@@ -12,15 +12,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import net.fabricmc.loader.api.metadata.ModEnvironment;
+import nahara.modkit.annotations.v1.Env;
 
 public class ComputedMixins {
 	private String commonPackage;
 	private List<String> flattenMixins = new ArrayList<>();
 	private String modid;
-	private ModEnvironment env;
+	private Env env;
 
-	public ComputedMixins(String modid, ModEnvironment env) {
+	public ComputedMixins(String modid, Env env) {
 		this.modid = modid;
 		this.env = env;
 	}
@@ -29,7 +29,7 @@ public class ComputedMixins {
 		return modid;
 	}
 
-	public ModEnvironment getEnv() {
+	public Env getEnv() {
 		return env;
 	}
 
@@ -75,7 +75,7 @@ public class ComputedMixins {
 		if (flattenMixins.isEmpty()) return Optional.empty();
 
 		var config = new JsonPrimitive(getConfigName());
-		if (env == ModEnvironment.UNIVERSAL) return Optional.of(config);
+		if (env == Env.ALL) return Optional.of(config);
 
 		var root = new JsonObject();
 		root.add("config", config);

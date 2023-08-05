@@ -24,7 +24,8 @@ Using ``nahara-modkit-annotations-v1``
 
 ```groovy
 dependencies {
-    modImplementation annotationProcessor("me.nahkd:nahara-modkit-annotations-v1:1.0.0-SNAPSHOT")
+    // Yes, we don't use modImplementation
+    implementation annotationProcessor("me.nahkd:nahara-modkit-annotations-v1:1.0.0-SNAPSHOT")
 }
 
 // Include this if you want to use "${version}" in your annotation

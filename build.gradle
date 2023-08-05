@@ -7,7 +7,6 @@ plugins {
 allprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
-    apply plugin: 'fabric-loom'
 
     version = rootProject.mod_version
     group = rootProject.maven_group
@@ -24,25 +23,34 @@ allprojects {
         }
     }
 
-    compileJava {
-        options.compilerArgs << "-Anahara.modkit.expand=version:${project.version}"
-    }
+    // Don't apply Fabric Loom to annotation processor
+    if (!project.name.startsWith('annotations-')) {
+        apply plugin: 'fabric-loom'
 
-    loom {
-        splitEnvironmentSourceSets()
-    }
+        compileJava {
+            options.compilerArgs << "-Anahara.modkit.expand=version:${project.version}"
+        }
 
-    dependencies {
-        minecraft "com.mojang:minecraft:$rootProject.minecraft_version"
-        mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
-        modApi "net.fabricmc:fabric-loader:${rootProject.loader_version}"
-    }
+        loom {
+            splitEnvironmentSourceSets()
+        }
 
-    processResources {
-        inputs.property "version", project.version
+        dependencies {
+            minecraft "com.mojang:minecraft:$rootProject.minecraft_version"
+            mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+            modApi "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+        }
 
-        filesMatching("fabric.mod.json") {
-            expand "version": project.version
+        processResources {
+            inputs.property "version", project.version
+
+            filesMatching("fabric.mod.json") {
+                expand "version": project.version
+            }
+        }
+    } else {
+        repositories {
+            mavenCentral()
         }
     }
 }

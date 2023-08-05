@@ -9,9 +9,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import nahara.modkit.annotations.v1.Dependency;
+import nahara.modkit.annotations.v1.Env;
 import nahara.modkit.annotations.v1.Mod;
 import nahara.modkit.annotations.v1.processor.autoreg.EntryPointGenerator;
-import net.fabricmc.loader.api.metadata.ModEnvironment;
 
 public class ModProcessingInfo {
 	public Mod modIndex;
@@ -19,9 +19,9 @@ public class ModProcessingInfo {
 	public final List<String> commonEntryPoints = new ArrayList<>();
 	public final List<String> clientEntryPoints = new ArrayList<>();
 	public final List<String> serverEntryPoints = new ArrayList<>();
-	public final ModMixinsInfo commonMixins = new ModMixinsInfo(ModEnvironment.UNIVERSAL);
-	public final ModMixinsInfo clientMixins = new ModMixinsInfo(ModEnvironment.CLIENT);
-	public final ModMixinsInfo serverMixins = new ModMixinsInfo(ModEnvironment.SERVER);
+	public final ModMixinsInfo commonMixins = new ModMixinsInfo(Env.ALL);
+	public final ModMixinsInfo clientMixins = new ModMixinsInfo(Env.CLIENT);
+	public final ModMixinsInfo serverMixins = new ModMixinsInfo(Env.SERVER);
 	public final EntryPointGenerator entryPointGenerator;
 
 	public ComputedMixins computedCommonMixins, computedClientMixins, computedServerMixins;
@@ -46,7 +46,7 @@ public class ModProcessingInfo {
 		root.addProperty("id", modIndex.modid());
 		root.addProperty("name", modIndex.name().length() > 0? modIndex.name() : modIndex.modid());
 		root.addProperty("version", modIndex.version());
-		root.addProperty("environment", modIndex.modEnvironment() == ModEnvironment.UNIVERSAL? "*" : modIndex.modEnvironment().toString().toLowerCase());
+		root.addProperty("environment", modIndex.modEnvironment().getConfigName());
 		root.addProperty("license", modIndex.license().length() > 0? modIndex.license() : "UNLICENSED");
 		root.addProperty("icon", modIndex.icon().length() > 0? modIndex.icon() : "assets/" + modIndex.modid() + "/icon.png");
 

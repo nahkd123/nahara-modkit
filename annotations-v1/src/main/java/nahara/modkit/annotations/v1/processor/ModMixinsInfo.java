@@ -3,13 +3,13 @@ package nahara.modkit.annotations.v1.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.fabricmc.loader.api.metadata.ModEnvironment;
+import nahara.modkit.annotations.v1.Env;
 
 public class ModMixinsInfo {
-	private ModEnvironment env;
+	private Env env;
 	public final List<String> mixins = new ArrayList<>();
 
-	public ModMixinsInfo(ModEnvironment env) {
+	public ModMixinsInfo(Env env) {
 		this.env = env;
 	}
 

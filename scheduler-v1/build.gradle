@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-    implementation annotationProcessor(project(path: ':annotations-v1', configuration: "namedElements"))
+    implementation annotationProcessor(project(':annotations-v1'))
 
     api include('com.github.nahkd123.nahara-toolkit:nahara-common-tasks:main-SNAPSHOT')
 }

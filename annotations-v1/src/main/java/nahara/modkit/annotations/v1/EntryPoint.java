@@ -8,8 +8,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import net.fabricmc.loader.api.metadata.ModEnvironment;
-
 /**
  * <p>Annotate your class or <b>static</b> method with this annotation to automagically include it inside
  * {@code fabric.mod.json}.</p>
@@ -18,5 +16,5 @@ import net.fabricmc.loader.api.metadata.ModEnvironment;
 @Retention(SOURCE)
 @Target({ TYPE, METHOD })
 public @interface EntryPoint {
-	public ModEnvironment environment() default ModEnvironment.UNIVERSAL;
+	public Env environment() default Env.ALL;
 }

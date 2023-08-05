@@ -7,8 +7,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import net.fabricmc.loader.api.metadata.ModEnvironment;
-
 /**
  * <p>Annotate any of your class with this annotation to supply additional details for {@code fabric.mod.json}.</p>
  */
@@ -22,6 +20,6 @@ public @interface Mod {
 	public String description() default "";
 	public String[] authors() default {};
 	public String license() default "";
-	public ModEnvironment modEnvironment() default ModEnvironment.UNIVERSAL;
+	public Env modEnvironment() default Env.ALL;
 	public String icon() default "";
 }
