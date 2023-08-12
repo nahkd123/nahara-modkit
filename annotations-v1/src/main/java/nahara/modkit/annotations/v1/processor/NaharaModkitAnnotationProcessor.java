@@ -29,6 +29,7 @@ import com.google.gson.JsonElement;
 
 import nahara.modkit.annotations.v1.AutoMixin;
 import nahara.modkit.annotations.v1.AutoRegister;
+import nahara.modkit.annotations.v1.Dependencies;
 import nahara.modkit.annotations.v1.EntryPoint;
 import nahara.modkit.annotations.v1.Mod;
 import nahara.modkit.annotations.v1.processor.autoreg.EntryPointGenerator;
@@ -85,6 +86,11 @@ public class NaharaModkitAnnotationProcessor extends AbstractProcessor {
 		for (var modElement : roundEnv.getElementsAnnotatedWith(Mod.class)) {
 			if (modProcessingInfo.modIndex != null) processingEnv.getMessager().printMessage(Kind.WARNING, "There are more than 1 @Mod annotations declared; using modid = " + modElement.getAnnotation(Mod.class));
 			modProcessingInfo.modIndex = modElement.getAnnotation(Mod.class);
+
+			var deps = modElement.getAnnotation(Dependencies.class);
+			if (deps != null) for (var dependency : deps.value()) {
+				modProcessingInfo.dependencies.add(dependency);
+			}
 		}
 	}
 
