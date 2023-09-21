@@ -54,10 +54,6 @@ allprojects {
             options.compilerArgs << "-Anahara.modkit.expand=version:${project.version}"
         }
 
-        loom {
-            splitEnvironmentSourceSets()
-        }
-
         dependencies {
             minecraft "com.mojang:minecraft:$rootProject.minecraft_version"
             mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
