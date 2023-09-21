@@ -1,0 +1,133 @@
+package nahara.modkit.gui.v1.widget.included;
+
+import org.jetbrains.annotations.Nullable;
+
+import nahara.modkit.gui.v1.widget.AbstractDrawable;
+import nahara.modkit.gui.v1.widget.Focusable;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+
+/**
+ * <p>
+ * A custom button implementation.
+ * </p>
+ * <p>
+ * <b>Listening for clicks:</b> You can listen for clicks by creating an
+ * anonymous class of {@link NaharaButton}:
+ * 
+ * <pre>
+ * new NaharaButton() {
+ * 	&#64;Override
+ * 	public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+ * 		if (super.onMouseDown(mouseX, mouseY, delta, button)) {
+ * 			LOGGER.info("button is clicked!");
+ * 			return true;
+ * 		} else {
+ * 			return false;
+ * 		}
+ * 	}
+ * }.width(100).height(24);
+ * </pre>
+ * </p>
+ * 
+ * @see #setLabel(Text)
+ * @see #setPressed(boolean)
+ */
+public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focusable<NaharaButton> {
+	{
+		width = 100;
+		height = 24;
+	}
+
+	protected Text label = null;
+	protected boolean pressed = false;
+	private boolean pressing = false;
+
+	public Text getLabel() { return label; }
+
+	public void setLabel(Text label) { this.label = label; }
+
+	public NaharaButton label(@Nullable Text label) {
+		setLabel(label);
+		return this;
+	}
+
+	public boolean isPressed() { return pressed; }
+
+	public void setPressed(boolean pressed) { this.pressed = pressed; }
+
+	/**
+	 * <p>
+	 * Unlike {@link #isPressed()}, this method returns whether this button has a
+	 * pressed state or user is pressing this button.
+	 * </p>
+	 * 
+	 * @return The pressing state of the button.
+	 */
+	public boolean isPressing() { return pressed || pressing; }
+
+	public NaharaButton pressed(boolean pressed) {
+		this.pressed = pressed;
+		return this;
+	}
+
+	@Override
+	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
+		boolean hovering = manager.getHovering() == this || manager.getFocus() == this;
+		boolean pressing = isPressing();
+		int lightningHeight = Math.max(height / 7, 2);
+		int lightningTop = pressing ? 0xFF6F6F6F : 0xFFBFBFBF;
+		int lightningMid = pressing ? 0xFF8F8F8F : 0xFF9F9F9F;
+		int lightningBot = pressing ? 0xFFAFAFAF : 0xFF7F7F7F;
+
+		context.enableScissor(x, y, x + width, y + height);
+		context.fill(x, y, x + width, y + height, lightningMid);
+		context.fill(x, y, x + width, y + lightningHeight, lightningTop);
+		context.fill(x, y + height - lightningHeight, x + width, y + height, lightningBot);
+		context.drawBorder(x, y, width, height, hovering ? 0xFFFFFFFF : 0xFF000000);
+
+		if (label != null) {
+			int labelWidth = manager.getTextRenderer().getWidth(label);
+			int labelHeight = manager.getTextRenderer().fontHeight;
+			context.drawText(
+				manager.getTextRenderer(), label,
+				x + (width - labelWidth) / 2, y + (height - labelHeight) / 2 + 1,
+				0xFFFFFF, true);
+		}
+
+		context.disableScissor();
+	}
+
+	@Override
+	public boolean onMouseMove(int mouseX, int mouseY, float delta) {
+		if (super.onMouseMove(mouseX, mouseY, delta)) {
+			manager.useHovering(this);
+			return true;
+		} else {
+			if (manager.getHovering() == this) manager.useHovering(null);
+			return false;
+		}
+	}
+
+	@Override
+	public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+		if (super.onMouseDown(mouseX, mouseY, delta, button)) {
+			manager.useFocus(this);
+			pressing = true;
+			MinecraftClient.getInstance().getSoundManager()
+				.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
+		pressing = false;
+		return super.onMouseUp(mouseX, mouseY, delta, button);
+	}
+}

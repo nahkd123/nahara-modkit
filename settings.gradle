@@ -10,6 +10,7 @@ plugins {
 }
 
 include 'annotations-v1'
+include 'gui-v1'
 include 'scheduler-v1'
 
 include 'example-mod'
