@@ -20,13 +20,14 @@ import net.minecraft.text.Text;
 @Dependencies({
 	@Dependency(value = "fabricloader"),
 	@Dependency(value = "fabric-api"),
-	@Dependency(value = "minecraft", version = "~1.20.1")
+	@Dependency(value = "minecraft", version = "~1.20.2")
 })
 @EntryPoint
 public class ExampleMod implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("nahara-modkit-example");
 
-	@AutoRegister public static final Item MY_ITEM = new Item(new FabricItemSettings());
+	@AutoRegister
+	public static final Item MY_ITEM = new Item(new FabricItemSettings());
 
 	@Override
 	public void onInitialize() {
@@ -37,9 +38,11 @@ public class ExampleMod implements ModInitializer {
 				ctx.getSource().sendMessage(Text.literal("Scheduling tasks..."));
 				var scheduler = Schedulers.from(ctx.getSource().getServer());
 				scheduler
-				.scheduleNextTick(() -> ctx.getSource().sendMessage(Text.literal("Called on next tick!")))
-				.andThen($ -> scheduler.wait(100))
-				.afterThatDo($ -> { ctx.getSource().sendMessage(Text.literal("Waited for 5 seconds!")); });
+					.scheduleNextTick(() -> ctx.getSource().sendMessage(Text.literal("Called on next tick!")))
+					.andThen($ -> scheduler.wait(100))
+					.afterThatDo($ -> {
+						ctx.getSource().sendMessage(Text.literal("Waited for 5 seconds!"));
+					});
 				return 1;
 			}));
 		});

@@ -12,7 +12,7 @@ import nahara.modkit.annotations.v1.Mod;
 	license = "MIT")
 @Dependencies({
 	@Dependency(value = "fabricloader"),
-	@Dependency(value = "minecraft", version = ">=1.20"),
+	@Dependency(value = "minecraft", version = "~1.20.2"),
 	@Dependency(value = "java", version = ">=17")
 })
 public class NaharaGUI {

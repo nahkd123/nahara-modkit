@@ -76,7 +76,7 @@ public abstract class NaharaScreen extends Screen implements WidgetsManager {
 	public Focusable<?> getFocus() { return focusing; }
 
 	@Override
-	public boolean isDebugging() { return debugging && client.options.debugEnabled; }
+	public boolean isDebugging() { return debugging && client.getDebugHud().shouldShowDebugHud(); }
 
 	@Override
 	public TextRenderer getTextRenderer() { return textRenderer; }
