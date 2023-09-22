@@ -1,6 +1,6 @@
 package nahara.modkit.gui.v1.layout;
 
-public enum Axes {
+public enum Axis {
 	X,
 	Y;
 }

@@ -3,6 +3,7 @@ package nahara.modkit.gui.v1.widget;
 import java.util.function.Consumer;
 
 import nahara.modkit.gui.v1.layout.Layout;
+import nahara.modkit.gui.v1.widget.included.DrawableContainer;
 import net.minecraft.client.gui.DrawContext;
 
 /**
@@ -13,6 +14,24 @@ import net.minecraft.client.gui.DrawContext;
  */
 // TODO should we move geometry stuffs like getX() to Geometry<T>?
 public interface Drawable<T extends Drawable<T>> {
+	/**
+	 * <p>
+	 * Return true if this {@link Drawable} needs to be recomputed.
+	 * </p>
+	 * <p>
+	 * This will be changed when you call methods that modify the visual of this
+	 * component, like using {@link #setWidth(int)} for example.
+	 * </p>
+	 * <p>
+	 * This will be used by
+	 * {@link DrawableContainer#onRender(DrawContext, int, int, float)} to recompute
+	 * geometry before rendering to screen.
+	 * </p>
+	 * 
+	 * @return Recompute request state.
+	 */
+	public boolean geometryRecomputeNeeded();
+
 	public int getX();
 
 	public void setX(int x);

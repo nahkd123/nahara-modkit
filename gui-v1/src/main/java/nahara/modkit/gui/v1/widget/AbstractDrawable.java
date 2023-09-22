@@ -1,5 +1,7 @@
 package nahara.modkit.gui.v1.widget;
 
+import java.util.function.Consumer;
+
 import nahara.modkit.gui.v1.layout.Layout;
 
 public abstract class AbstractDrawable<T extends AbstractDrawable<T>> extends AbstractWidget<T> implements Drawable<T> {
@@ -7,7 +9,7 @@ public abstract class AbstractDrawable<T extends AbstractDrawable<T>> extends Ab
 	// The final geometry that will be displayed will be calculated by Layout and
 	// applied to this drawable with useComputedGeometry()
 	protected int referenceX = 0, referenceY = 0, referenceWidth = 1, referenceHeight = 1;
-	protected boolean visible = true;
+	protected boolean visible = true, geometryRecomputeNeeded = false;
 	protected Layout layout = new Layout();
 
 	// Computed geometry info
@@ -17,31 +19,46 @@ public abstract class AbstractDrawable<T extends AbstractDrawable<T>> extends Ab
 	public int getX() { return referenceX; }
 
 	@Override
-	public void setX(int x) { this.referenceX = x; }
+	public void setX(int x) {
+		this.referenceX = x;
+		this.geometryRecomputeNeeded = true;
+	}
 
 	@Override
 	public int getY() { return referenceY; }
 
 	@Override
-	public void setY(int y) { this.referenceY = y; }
+	public void setY(int y) {
+		this.referenceY = y;
+		this.geometryRecomputeNeeded = true;
+	}
 
 	@Override
 	public int getWidth() { return referenceWidth; }
 
 	@Override
-	public void setWidth(int width) { this.referenceWidth = width; }
+	public void setWidth(int width) {
+		this.referenceWidth = width;
+		this.geometryRecomputeNeeded = true;
+	}
 
 	@Override
 	public int getHeight() { return referenceHeight; }
 
 	@Override
-	public void setHeight(int height) { this.referenceHeight = height; }
+	public void setHeight(int height) {
+		this.referenceHeight = height;
+		this.geometryRecomputeNeeded = true;
+	}
 
 	@Override
 	public boolean isVisible() { return visible; }
 
 	@Override
-	public void setVisible(boolean visible) { this.visible = visible; }
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+		this.geometryRecomputeNeeded = true;
+	}
 
 	@Override
 	public void useComputedGeometry(int x, int y, int width, int height, int globalX, int globalY) {
@@ -51,6 +68,7 @@ public abstract class AbstractDrawable<T extends AbstractDrawable<T>> extends Ab
 		this.height = height;
 		this.globalX = globalX;
 		this.globalY = globalY;
+		this.geometryRecomputeNeeded = false;
 	}
 
 	@Override
@@ -64,5 +82,16 @@ public abstract class AbstractDrawable<T extends AbstractDrawable<T>> extends Ab
 	}
 
 	@Override
+	public boolean geometryRecomputeNeeded() {
+		return geometryRecomputeNeeded;
+	}
+
+	@Override
 	public Layout getLayout() { return layout; }
+
+	@Override
+	public T layout(Consumer<Layout> consumer) {
+		geometryRecomputeNeeded = true;
+		return Drawable.super.layout(consumer);
+	}
 }

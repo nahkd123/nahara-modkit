@@ -7,6 +7,7 @@ import nahara.modkit.gui.v1.widget.Drawable;
 public class Layout {
 	private Anchor origin = Anchor.TOP_LEFT;
 	private Anchor anchor = Anchor.TOP_LEFT;
+	private Axis[] fillAxes = new Axis[0];
 
 	public Anchor getOrigin() { return origin; }
 
@@ -24,7 +25,29 @@ public class Layout {
 		return this;
 	}
 
+	public Axis[] getFillAxes() { return fillAxes; }
+
+	public Layout setFillAxes(Axis... fillAxes) {
+		this.fillAxes = fillAxes;
+		return this;
+	}
+
 	public void applyTo(Drawable<?> drawable, int parentWidth, int parentHeight, int parentGlobalX, int parentGlobalY) {
+		boolean fillAxisX = false, fillAxisY = false;
+
+		for (Axis axis : fillAxes) {
+			switch (axis) {
+			case X:
+				fillAxisX = true;
+				break;
+			case Y:
+				fillAxisY = true;
+				break;
+			default:
+				break;
+			}
+		}
+
 		int anchorX = switch (origin) {
 		case TOP_LEFT, MIDDLE_LEFT, BOTTOM_LEFT -> 0;
 		case TOP_MIDDLE, MIDDLE, BOTTOM_MIDDLE -> drawable.getWidth() / 2;
@@ -51,11 +74,10 @@ public class Layout {
 		default -> 0;
 		};
 
-		// TODO auto fill for width and height idk man
-		int drawX = originX - anchorX + drawable.getX();
-		int drawY = originY - anchorY + drawable.getY();
-		int drawW = drawable.getWidth();
-		int drawH = drawable.getHeight();
+		int drawX = fillAxisX ? 0 : originX - anchorX + drawable.getX();
+		int drawY = fillAxisY ? 0 : originY - anchorY + drawable.getY();
+		int drawW = fillAxisX ? parentWidth : drawable.getWidth();
+		int drawH = fillAxisY ? parentHeight : drawable.getHeight();
 		drawable.useComputedGeometry(drawX, drawY, drawW, drawH, parentGlobalX + drawX, parentGlobalY + drawY);
 	}
 }

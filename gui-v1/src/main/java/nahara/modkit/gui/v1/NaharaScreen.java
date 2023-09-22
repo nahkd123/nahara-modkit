@@ -46,7 +46,8 @@ public abstract class NaharaScreen extends Screen implements WidgetsManager {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		int mX = (int) Math.round(mouseX);
 		int mY = (int) Math.round(mouseY);
-		if (focusing != null && ((Drawable<?>) focusing).onMouseDown(mX, mY, 0, button)) return true;
+		// Mouse down could affect focus, so we don't send interaction to focused
+		// element
 		return root.onMouseDown(mX, mY, 0, button);
 	}
 
@@ -54,8 +55,32 @@ public abstract class NaharaScreen extends Screen implements WidgetsManager {
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		int mX = (int) Math.round(mouseX);
 		int mY = (int) Math.round(mouseY);
-		if (focusing != null && ((Drawable<?>) focusing).onMouseUp(mX, mY, 0, button)) return true;
+
+		if (focusing != null) {
+			int[] geom = new int[6];
+			((Drawable<?>) focusing).getComputedGeometry(geom);
+			if (((Drawable<?>) focusing).onMouseUp(mX - geom[4], mY - geom[5], 0, button)) return true;
+		}
+
 		return root.onMouseUp(mX, mY, 0, button);
+	}
+
+	@Override
+	public boolean charTyped(char chr, int modifiers) {
+		if (this.focusing != null) this.focusing.onCharacterTyped(chr, modifiers);
+		return super.charTyped(chr, modifiers);
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (this.focusing != null) this.focusing.onKeyDown(keyCode, scanCode, modifiers);
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
+	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+		if (this.focusing != null) this.focusing.onKeyUp(keyCode, scanCode, modifiers);
+		return super.keyReleased(keyCode, scanCode, modifiers);
 	}
 
 	@Override

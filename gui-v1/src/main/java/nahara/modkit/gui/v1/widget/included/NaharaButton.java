@@ -46,9 +46,9 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 	protected boolean pressed = false;
 	private boolean pressing = false;
 
-	public Text getLabel() { return label; }
+	public Text getLabel() { return label == null ? Text.empty() : label; }
 
-	public void setLabel(Text label) { this.label = label; }
+	public void setLabel(Text label) { this.label = label == null ? Text.empty() : label; }
 
 	public NaharaButton label(@Nullable Text label) {
 		setLabel(label);
@@ -76,6 +76,7 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 
 	@Override
 	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
+		Text label = getLabel();
 		boolean hovering = manager.getHovering() == this || manager.getFocus() == this;
 		boolean pressing = isPressing();
 		int lightningHeight = Math.max(height / 7, 2);
@@ -83,7 +84,7 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 		int lightningMid = pressing ? 0xFF8F8F8F : 0xFF9F9F9F;
 		int lightningBot = pressing ? 0xFFAFAFAF : 0xFF7F7F7F;
 
-		context.enableScissor(x, y, x + width, y + height);
+		context.enableScissor(globalX, globalY, globalX + width, globalY + height);
 		context.fill(x, y, x + width, y + height, lightningMid);
 		context.fill(x, y, x + width, y + lightningHeight, lightningTop);
 		context.fill(x, y + height - lightningHeight, x + width, y + height, lightningBot);
@@ -94,8 +95,12 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 			int labelHeight = manager.getTextRenderer().fontHeight;
 			context.drawText(
 				manager.getTextRenderer(), label,
+				x + (width - labelWidth) / 2 + 1, y + (height - labelHeight) / 2 + 2,
+				0x4F4F4F, false);
+			context.drawText(
+				manager.getTextRenderer(), label,
 				x + (width - labelWidth) / 2, y + (height - labelHeight) / 2 + 1,
-				0xFFFFFF, true);
+				0xFFFFFF, false);
 		}
 
 		context.disableScissor();

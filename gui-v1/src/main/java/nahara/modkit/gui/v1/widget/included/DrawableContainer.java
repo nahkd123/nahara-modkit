@@ -21,6 +21,7 @@ import net.minecraft.client.gui.DrawContext;
  */
 public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	protected List<Drawable<?>> children = new ArrayList<>();
+	protected int translateX = 0, translateY = 0;
 
 	public List<Drawable<?>> getChildren() { return children; }
 
@@ -29,30 +30,58 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 		return this;
 	}
 
+	public int getTranslateX() { return translateX; }
+
+	public DrawableContainer setTranslateX(int translateX) {
+		this.translateX = translateX;
+		this.geometryRecomputeNeeded = true;
+		return this;
+	}
+
+	public int getTranslateY() { return translateY; }
+
+	public DrawableContainer setTranslateY(int translateY) {
+		this.translateY = translateY;
+		this.geometryRecomputeNeeded = true;
+		return this;
+	}
+
+	public DrawableContainer setTranslate(int x, int y) {
+		this.translateX = x;
+		this.translateY = y;
+		this.geometryRecomputeNeeded = true;
+		return this;
+	}
+
 	@Override
 	public void useComputedGeometry(int x, int y, int width, int height, int globalX, int globalY) {
 		super.useComputedGeometry(x, y, width, height, globalX, globalY);
+		for (Drawable<?> child : children) recomputeChild(child);
+	}
 
-		for (Drawable<?> child : children) {
-			if (!child.isVisible()) continue;
-			((Widget<?>) child).useManager(manager);
-			child.getLayout().applyTo(child, width, height, globalX, globalY);
-		}
+	protected void recomputeChild(Drawable<?> child) {
+		if (!child.isVisible()) return;
+		((Widget<?>) child).useManager(manager);
+		child.getLayout().applyTo(child, width, height, globalX + translateX, globalY + translateY);
 	}
 
 	@Override
 	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
 		context.getMatrices().push();
-		context.getMatrices().translate(x, y, 0);
+		context.getMatrices().translate(x + translateX, y + translateY, 0);
 		context.enableScissor(globalX, globalY, globalX + width, globalY + height);
 
 		for (Drawable<?> child : children) {
 			if (!child.isVisible()) continue;
+			if (child.geometryRecomputeNeeded()) recomputeChild(child);
 			((Widget<?>) child).useManager(manager);
 			child.onRender(context, mouseX - x, mouseY - y, delta);
 		}
 
-		if (manager.isDebugging()) context.drawBorder(x, y, width, height, 0xAFFF0000);
+		if (manager.isDebugging()) {
+			context.getMatrices().translate(-translateX, -translateY, 0);
+			context.drawBorder(0, 0, width, height, 0xAFFF0000);
+		}
 
 		context.disableScissor();
 		context.getMatrices().pop();
@@ -62,7 +91,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	public boolean onMouseMove(int mouseX, int mouseY, float delta) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			Drawable<?> child = children.get(i);
-			if (child.onMouseMove(mouseX - x, mouseY - y, delta)) return true;
+			if (child.onMouseMove(mouseX - x - translateX, mouseY - y - translateY, delta)) return true;
 		}
 
 		if (super.onMouseMove(mouseX, mouseY, delta)) {
@@ -76,19 +105,25 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 
 	@Override
 	public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
-		for (int i = children.size() - 1; i >= 0; i--) {
-			Drawable<?> child = children.get(i);
-			if (child.onMouseDown(mouseX - x, mouseY - y, delta, button)) return true;
-		}
+		boolean isInContainer = testGeometry(mouseX, mouseY);
 
-		return super.onMouseMove(mouseX, mouseY, delta);
+		if (isInContainer) {
+			for (int i = children.size() - 1; i >= 0; i--) {
+				Drawable<?> child = children.get(i);
+				if (child.onMouseDown(mouseX - x - translateX, mouseY - y - translateY, delta, button)) return true;
+			}
+
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			Drawable<?> child = children.get(i);
-			if (child.onMouseUp(mouseX - x, mouseY - y, delta, button)) return true;
+			if (child.onMouseUp(mouseX - x - translateX, mouseY - y - translateY, delta, button)) return true;
 		}
 
 		return super.onMouseMove(mouseX, mouseY, delta);
