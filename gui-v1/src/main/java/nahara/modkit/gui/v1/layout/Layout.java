@@ -53,13 +53,13 @@ public class Layout {
 			}
 		}
 
-		int anchorX = switch (origin) {
+		int anchorX = switch (anchor) {
 		case TOP_LEFT, MIDDLE_LEFT, BOTTOM_LEFT -> 0;
 		case TOP_MIDDLE, MIDDLE, BOTTOM_MIDDLE -> drawable.getWidth() / 2;
 		case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT -> drawable.getWidth();
 		default -> 0;
 		};
-		int anchorY = switch (origin) {
+		int anchorY = switch (anchor) {
 		case TOP_LEFT, TOP_MIDDLE, TOP_RIGHT -> 0;
 		case MIDDLE_LEFT, MIDDLE, MIDDLE_RIGHT -> drawable.getHeight() / 2;
 		case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT -> drawable.getHeight();

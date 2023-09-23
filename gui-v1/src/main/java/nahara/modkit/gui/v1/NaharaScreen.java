@@ -2,6 +2,7 @@ package nahara.modkit.gui.v1;
 
 import org.jetbrains.annotations.Nullable;
 
+import nahara.modkit.gui.v1.layout.Layout;
 import nahara.modkit.gui.v1.widget.Drawable;
 import nahara.modkit.gui.v1.widget.Focusable;
 import nahara.modkit.gui.v1.widget.Widget;
@@ -86,7 +87,31 @@ public abstract class NaharaScreen extends Screen implements WidgetsManager {
 		int[] geom = new int[6];
 		drawable.getComputedGeometry(geom);
 		context.drawBorder(geom[4] - 2, geom[5] - 2, geom[2] + 4, geom[3] + 4, color);
-		// TODO draw anchor + origin
+
+		Layout layout = drawable.getLayout();
+
+		int anchorX = switch (layout.getAnchor()) {
+		case TOP_LEFT, MIDDLE_LEFT, BOTTOM_LEFT -> 0;
+		case TOP_MIDDLE, MIDDLE, BOTTOM_MIDDLE -> drawable.getWidth() / 2 + 2;
+		case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT -> drawable.getWidth() + 3;
+		default -> 0;
+		};
+		int anchorY = switch (layout.getAnchor()) {
+		case TOP_LEFT, TOP_MIDDLE, TOP_RIGHT -> 0;
+		case MIDDLE_LEFT, MIDDLE, MIDDLE_RIGHT -> drawable.getHeight() / 2 + 2;
+		case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT -> drawable.getHeight() + 3;
+		default -> 0;
+		};
+
+		// Draw anchor
+		context.fill(
+			geom[4] - 3 + anchorX, geom[5] - 3 + anchorY,
+			geom[4] + anchorX, geom[5] + anchorY,
+			0xFFFFFFFF);
+		context.fill(
+			geom[4] - 3 + anchorX, geom[5] - 3 + anchorY,
+			geom[4] + anchorX, geom[5] + anchorY,
+			color & 0x7FFFFFFF);
 	}
 
 	private void debug$addText(DrawContext context, Object obj, int color) {
