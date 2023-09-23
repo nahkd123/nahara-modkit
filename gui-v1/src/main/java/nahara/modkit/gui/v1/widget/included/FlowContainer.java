@@ -113,4 +113,17 @@ public class FlowContainer extends DrawableContainer {
 		applyFlow();
 		super.onRender(context, mouseX, mouseY, delta);
 	}
+
+	/**
+	 * <p>
+	 * Convenience method for creating an invisible {@link Box} that can be used as
+	 * a spacer for {@link FlowContainer}.
+	 * </p>
+	 * 
+	 * @param size Box size.
+	 * @return The spacer box.
+	 */
+	public static Box spacer(int size) {
+		return new Box().backgroundColor(0).borderColor(0).width(size).height(size);
+	}
 }

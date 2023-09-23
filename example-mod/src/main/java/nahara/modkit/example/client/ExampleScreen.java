@@ -8,6 +8,8 @@ import nahara.modkit.gui.v1.widget.included.Button;
 import nahara.modkit.gui.v1.widget.included.Checkbox;
 import nahara.modkit.gui.v1.widget.included.DrawableContainer;
 import nahara.modkit.gui.v1.widget.included.FlowContainer;
+import nahara.modkit.gui.v1.widget.included.Label;
+import nahara.modkit.gui.v1.widget.included.ScrollProxy;
 import nahara.modkit.gui.v1.widget.included.Slider;
 import nahara.modkit.gui.v1.widget.included.Textbox;
 import net.minecraft.client.gui.DrawContext;
@@ -18,16 +20,25 @@ public class ExampleScreen extends NaharaScreen {
 		super(Text.literal("Example Nahara Screen"));
 		debugging = true;
 
-		add(new FlowContainer().flowAxis(Axis.Y).x(4).y(12).width(100).height(200).add(
-			new Button().label(Text.literal("Controls")).x(0).y(0).width(100).height(24),
-			new Button().label(Text.literal("Button (Nx24)")).x(0).width(100).height(24),
-			new Button().label(Text.literal("Button (Nx14)")).x(0).width(100).height(14),
-			new Textbox().content("Hello World!").x(0).width(100).height(24),
-			new Textbox().content("Hello World!").x(0).width(100).height(14),
-			new Slider().value(0.5f).x(0).width(100).height(24),
-			new Slider().value(0.25f).x(0).width(100).height(14),
-			new Checkbox().x(0).width(100).height(24),
-			new Checkbox().x(0).width(100).height(14)));
+		add(new ScrollProxy(new FlowContainer().flowAxis(Axis.Y).x(0).y(0).width(100)
+			.add(
+				new Label().text(Text.literal("Controls")).x(0).width(100).height(10),
+				new Button().label(Text.literal("Button (Nx24)")).x(0).width(100).height(24),
+				FlowContainer.spacer(2),
+				new Button().label(Text.literal("Button (Nx14)")).x(0).width(100).height(14),
+				FlowContainer.spacer(2),
+				new Textbox().content("Hello World!").x(0).width(100).height(24),
+				FlowContainer.spacer(2),
+				new Textbox().content("Hello Nahara Modkit!").x(0).width(100).height(14),
+				FlowContainer.spacer(2),
+				new Slider().value(0.5f).x(0).width(100).height(24),
+				FlowContainer.spacer(2),
+				new Slider().value(0.25f).x(0).width(100).height(14),
+				FlowContainer.spacer(2),
+				new Checkbox().x(0).width(100).height(24),
+				FlowContainer.spacer(2),
+				new Checkbox().x(0).width(100).height(14)))
+			.x(4).y(12).width(100).height(100));
 
 		var layoutDemo = new DrawableContainer().x(108).y(12).width(100).height(100);
 		for (Anchor pos : Anchor.values()) {
@@ -35,7 +46,8 @@ public class ExampleScreen extends NaharaScreen {
 				.layout(layout -> layout.setAnchor(pos).setOrigin(pos))
 				.add(
 					new Box().x(0).y(0).width(10).height(10).backgroundColor(0xFFFF0000),
-					new Box().x(5).y(5).width(10).height(10).backgroundColor(0xFF00FF00)));
+					new Box().x(5).y(5).width(10).height(10).backgroundColor(0xFF00FF00),
+					new Label().text(Text.literal(pos.toString())).width(100).height(8)));
 		}
 		add(layoutDemo);
 	}
