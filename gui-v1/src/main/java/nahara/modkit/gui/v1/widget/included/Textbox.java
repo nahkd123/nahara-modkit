@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 
 import nahara.modkit.gui.v1.widget.AbstractDrawable;
 import nahara.modkit.gui.v1.widget.Focusable;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -35,7 +36,7 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 
 	public int getScroll() { return scroll; }
 
-	public void setScroll(int scroll) { this.scroll = scroll; }
+	public void setScroll(int scroll) { this.scroll = Math.max(scroll, 0); }
 
 	public Textbox scroll(int scroll) {
 		setScroll(scroll);
@@ -55,7 +56,18 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 
 	public int getCursorTo() { return cursorTo; }
 
-	public void setCursorTo(int cursorTo) { this.cursorTo = Math.max(Math.min(cursorTo, getContent().length()), 0); }
+	public void setCursorTo(int cursorTo) {
+		this.cursorTo = Math.max(Math.min(cursorTo, getContent().length()), 0);
+
+		if (manager == null) return;
+		TextRenderer renderer = manager.getTextRenderer();
+		String beforeCursor = getContent().substring(0, this.cursorTo);
+		int beforeCursorPx = renderer.getWidth(beforeCursor) - scroll;
+		int boundRight = width - 15;
+
+		if (beforeCursorPx > boundRight) setScroll(getScroll() + beforeCursorPx - boundRight);
+		if (beforeCursorPx < 0) setScroll(getScroll() + beforeCursorPx);
+	}
 
 	public Textbox cursorTo(int cursorTo) {
 		setCursorTo(cursorTo);
@@ -156,7 +168,8 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 		String beforeSel = getContent().substring(0, Math.min(cursorFrom, cursorTo));
 		String afterSel = getContent().substring(Math.max(cursorFrom, cursorTo));
 		setContent(beforeSel + ch + afterSel);
-		cursorFrom = cursorTo = beforeSel.length() + 1;
+		setCursorFrom(beforeSel.length() + 1);
+		setCursorTo(beforeSel.length() + 1);
 	}
 
 	@Override
@@ -178,8 +191,8 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 				setCursorFrom(getCursorTo());
 				break;
 			}
-			if (cursorFrom < cursorTo) cursorTo = cursorFrom;
-			if (cursorTo < cursorFrom) cursorFrom = cursorTo;
+			if (cursorFrom < cursorTo) setCursorTo(cursorFrom);
+			if (cursorTo < cursorFrom) setCursorFrom(cursorTo);
 			break;
 		case GLFW.GLFW_KEY_RIGHT:
 			if (isShift) {
@@ -191,8 +204,8 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 				setCursorFrom(getCursorTo());
 				break;
 			}
-			if (cursorFrom > cursorTo) cursorTo = cursorFrom;
-			if (cursorTo > cursorFrom) cursorFrom = cursorTo;
+			if (cursorFrom > cursorTo) setCursorTo(cursorFrom);
+			if (cursorTo > cursorFrom) setCursorFrom(cursorTo);
 			break;
 		case GLFW.GLFW_KEY_BACKSPACE:
 			if (selected.length() > 0) {
