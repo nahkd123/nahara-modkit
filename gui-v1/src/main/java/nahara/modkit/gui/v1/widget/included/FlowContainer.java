@@ -109,7 +109,7 @@ public class FlowContainer extends DrawableContainer {
 	}
 
 	@Override
-	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void onRender(DrawContext context, float mouseX, float mouseY, float delta) {
 		applyFlow();
 		super.onRender(context, mouseX, mouseY, delta);
 	}

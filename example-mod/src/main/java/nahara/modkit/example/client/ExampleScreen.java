@@ -50,7 +50,7 @@ public class ExampleScreen extends NaharaScreen {
 		var boxThing = new DrawableContainer().x(10).y(10).width(100).height(100);
 		boxThing.add(new NaharaButton() {
 			@Override
-			public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+			public boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 				if (super.onMouseDown(mouseX, mouseY, delta, button)) {
 					boxThing.setX(boxThing.getX() - 1);
 					return true;
@@ -63,7 +63,7 @@ public class ExampleScreen extends NaharaScreen {
 			.layout(layout -> layout.setAnchor(Anchor.MIDDLE_LEFT).setOrigin(Anchor.MIDDLE_LEFT)));
 		boxThing.add(new NaharaButton() {
 			@Override
-			public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+			public boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 				if (super.onMouseDown(mouseX, mouseY, delta, button)) {
 					boxThing.setX(boxThing.getX() + 1);
 					return true;
@@ -75,10 +75,10 @@ public class ExampleScreen extends NaharaScreen {
 			.label(Text.literal(">")).x(0).y(0).width(14).height(14)
 			.layout(layout -> layout.setAnchor(Anchor.MIDDLE_RIGHT).setOrigin(Anchor.MIDDLE_RIGHT)));
 		boxThing.add(new NaharaButton() {
-			int lastX, lastY;
+			float lastX, lastY;
 
 			@Override
-			public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+			public boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 				if (super.onMouseDown(mouseX, mouseY, delta, button)) {
 					lastX = mouseX + globalX;
 					lastY = mouseY + globalY;
@@ -89,10 +89,10 @@ public class ExampleScreen extends NaharaScreen {
 			}
 
 			@Override
-			public boolean onMouseMove(int mouseX, int mouseY, float delta) {
+			public boolean onMouseMove(float mouseX, float mouseY, float delta) {
 				if (manager.getFocus() == this && isPressing()) {
-					boxThing.setX(boxThing.getX() + (mouseX + globalX - lastX));
-					boxThing.setY(boxThing.getY() + (mouseY + globalY - lastY));
+					boxThing.setX(boxThing.getX() + Math.round(mouseX + globalX - lastX));
+					boxThing.setY(boxThing.getY() + Math.round(mouseY + globalY - lastY));
 					lastX = mouseX + globalX;
 					lastY = mouseY + globalY;
 					return true;

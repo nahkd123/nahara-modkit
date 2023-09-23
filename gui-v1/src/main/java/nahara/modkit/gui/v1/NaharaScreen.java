@@ -36,42 +36,42 @@ public abstract class NaharaScreen extends Screen implements WidgetsManager {
 		root.onRender(context, mouseX, mouseY, delta);
 
 		if (isDebugging()) {
-			context.drawText(textRenderer, "Hovering " + hovering, 0, 0, 0xFF7F7F, true);
-			context.drawText(textRenderer, "Focusing " + focusing, 0, 8, 0xFF7F7F, true);
-			context.drawText(textRenderer, "X " + mouseX + "; Y " + mouseY, 0, 16, 0xFF7F7F, true);
+			int[] geom = new int[6];
+
+			if (hovering != null) {
+				hovering.getComputedGeometry(geom);
+				context.drawBorder(geom[4], geom[5], geom[2], geom[3], 0xFFFF0000);
+			}
+
+			context.getMatrices().push();
+			context.getMatrices().translate(mouseX, mouseY, 0);
+			context.drawText(textRenderer, "Mouse (" + mouseX + ", " + mouseY + ")", 0, 0, 0xFF0000, true);
+			context.getMatrices().pop();
 		}
 	}
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		int mX = (int) Math.round(mouseX);
-		int mY = (int) Math.round(mouseY);
 		// Mouse down could affect focus, so we don't send interaction to focused
 		// element
-		return root.onMouseDown(mX, mY, 0, button);
+		return root.onMouseDown((float) mouseX, (float) mouseY, 0, button);
 	}
 
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		int mX = (int) Math.round(mouseX);
-		int mY = (int) Math.round(mouseY);
-
 		if (focusing != null) {
 			int[] geom = new int[6];
 			((Drawable<?>) focusing).getComputedGeometry(geom);
-			if (((Drawable<?>) focusing).onMouseUp(mX - geom[4], mY - geom[5], 0, button)) return true;
+			if (((Drawable<?>) focusing).onMouseUp((float) mouseX - geom[4], (float) mouseY - geom[5], 0, button))
+				return true;
 		}
 
-		return root.onMouseUp(mX, mY, 0, button);
+		return root.onMouseUp((float) mouseX, (float) mouseY, 0, button);
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-		int mX = (int) Math.round(mouseX);
-		int mY = (int) Math.round(mouseY);
-		int sX = (int) Math.round(horizontalAmount * 10d);
-		int sY = (int) Math.round(verticalAmount * 10d);
-		return root.onMouseScroll(mX, mY, sX, sY);
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		return root.onMouseScroll((float) mouseX, (float) mouseY, (float) scrollX * 10f, (float) scrollY * 10f);
 	}
 
 	@Override

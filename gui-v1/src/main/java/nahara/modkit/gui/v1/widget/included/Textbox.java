@@ -59,7 +59,7 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 	}
 
 	@Override
-	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void onRender(DrawContext context, float mouseX, float mouseY, float delta) {
 		boolean focused = manager.getFocus() == this;
 		boolean underscore = cursorFrom == cursorTo && cursorTo >= getContent().length();
 		int fontHeight = manager.getTextRenderer().fontHeight;
@@ -109,9 +109,9 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 	}
 
 	@Override
-	public boolean onMouseMove(int mouseX, int mouseY, float delta) {
+	public boolean onMouseMove(float mouseX, float mouseY, float delta) {
 		if (dragging) {
-			String trimmed = manager.getTextRenderer().trimToWidth(getContent(), mouseX - x - 4 + scroll);
+			String trimmed = manager.getTextRenderer().trimToWidth(getContent(), Math.round(mouseX - x - 4 + scroll));
 			setCursorTo(trimmed.length());
 			return true;
 		}
@@ -126,10 +126,10 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 	}
 
 	@Override
-	public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 		if (super.onMouseDown(mouseX, mouseY, delta, button)) {
 			manager.useFocus(this);
-			String trimmed = manager.getTextRenderer().trimToWidth(getContent(), mouseX - x - 4 + scroll);
+			String trimmed = manager.getTextRenderer().trimToWidth(getContent(), Math.round(mouseX - x - 4 + scroll));
 			cursorFrom(trimmed.length()).cursorTo(trimmed.length());
 			dragging = true;
 			return true;
@@ -139,7 +139,7 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 	}
 
 	@Override
-	public boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseUp(float mouseX, float mouseY, float delta, int button) {
 		if (manager.getFocus() == this) dragging = false;
 		return super.onMouseUp(mouseX, mouseY, delta, button);
 	}

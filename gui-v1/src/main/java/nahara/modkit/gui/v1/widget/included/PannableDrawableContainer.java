@@ -11,12 +11,12 @@ import nahara.modkit.gui.v1.widget.Focusable;
  */
 public class PannableDrawableContainer extends DrawableContainer implements Focusable<PannableDrawableContainer> {
 	protected boolean panning = false;
-	private int lastX, lastY;
+	private float lastX, lastY;
 
 	public boolean isPanning() { return panning; }
 
 	@Override
-	public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 		boolean isInContainer = testGeometry(mouseX, mouseY);
 
 		if (isInContainer) {
@@ -36,7 +36,7 @@ public class PannableDrawableContainer extends DrawableContainer implements Focu
 	}
 
 	@Override
-	public boolean onMouseMove(int mouseX, int mouseY, float delta) {
+	public boolean onMouseMove(float mouseX, float mouseY, float delta) {
 		if (panning) {
 			translateX += mouseX + globalX - lastX;
 			translateY += mouseY + globalY - lastY;
@@ -50,7 +50,7 @@ public class PannableDrawableContainer extends DrawableContainer implements Focu
 	}
 
 	@Override
-	public boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseUp(float mouseX, float mouseY, float delta, int button) {
 		panning = false;
 		if (manager.getFocus() == this) manager.useFocus(null);
 		return super.onMouseUp(mouseX, mouseY, delta, button);

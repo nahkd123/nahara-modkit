@@ -76,7 +76,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	}
 
 	@Override
-	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void onRender(DrawContext context, float mouseX, float mouseY, float delta) {
 		context.getMatrices().push();
 		context.getMatrices().translate(x + getTranslateX(), y + getTranslateY(), 0);
 		context.enableScissor(globalX, globalY, globalX + width, globalY + height);
@@ -88,17 +88,12 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 			child.onRender(context, mouseX - x, mouseY - y, delta);
 		}
 
-		if (manager.isDebugging()) {
-			context.getMatrices().translate(-getTranslateX(), -getTranslateY(), 0);
-			context.drawBorder(0, 0, width, height, 0xAFFF0000);
-		}
-
 		context.disableScissor();
 		context.getMatrices().pop();
 	}
 
 	@Override
-	public boolean onMouseMove(int mouseX, int mouseY, float delta) {
+	public boolean onMouseMove(float mouseX, float mouseY, float delta) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			Drawable<?> child = children.get(i);
 			if (child.onMouseMove(mouseX - x - getTranslateX(), mouseY - y - getTranslateY(), delta)) return true;
@@ -114,7 +109,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	}
 
 	@Override
-	public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 		boolean isInContainer = testGeometry(mouseX, mouseY);
 
 		if (isInContainer) {
@@ -131,7 +126,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	}
 
 	@Override
-	public boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseUp(float mouseX, float mouseY, float delta, int button) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			Drawable<?> child = children.get(i);
 			if (child.onMouseUp(mouseX - x - getTranslateX(), mouseY - y - getTranslateY(), delta, button)) return true;
@@ -141,7 +136,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	}
 
 	@Override
-	public boolean onMouseScroll(int mouseX, int mouseY, int deltaX, int deltaY) {
+	public boolean onMouseScroll(float mouseX, float mouseY, float deltaX, float deltaY) {
 		boolean isInContainer = testGeometry(mouseX, mouseY);
 		if (isInContainer) {
 			for (int i = children.size() - 1; i >= 0; i--) {

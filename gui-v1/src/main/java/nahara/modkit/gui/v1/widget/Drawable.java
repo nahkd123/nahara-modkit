@@ -142,7 +142,7 @@ public interface Drawable<T extends Drawable<T>> {
 	 * @param delta   Progress from previous to next tick (from {@code 0.0} to
 	 *                {@code 1.0}). Should be used for animations.
 	 */
-	default void onRender(DrawContext context, int mouseX, int mouseY, float delta) {}
+	default void onRender(DrawContext context, float mouseX, float mouseY, float delta) {}
 
 	/**
 	 * <p>
@@ -158,7 +158,7 @@ public interface Drawable<T extends Drawable<T>> {
 	 *         returns true if user's mouse is inside the bounding box of this
 	 *         widget.
 	 */
-	default boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+	default boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 		return testGeometry(mouseX, mouseY);
 	}
 
@@ -176,7 +176,7 @@ public interface Drawable<T extends Drawable<T>> {
 	 *         returns true if user's mouse is inside the bounding box of this
 	 *         widget.
 	 */
-	default boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
+	default boolean onMouseUp(float mouseX, float mouseY, float delta, int button) {
 		return testGeometry(mouseX, mouseY);
 	}
 
@@ -194,7 +194,7 @@ public interface Drawable<T extends Drawable<T>> {
 	 *         returns true if user's mouse is inside the bounding box of this
 	 *         widget.
 	 */
-	default boolean onMouseMove(int mouseX, int mouseY, float delta) {
+	default boolean onMouseMove(float mouseX, float mouseY, float delta) {
 		return testGeometry(mouseX, mouseY);
 	}
 
@@ -210,7 +210,7 @@ public interface Drawable<T extends Drawable<T>> {
 	 * @return true if this {@link Drawable} can be scrolled and you want to prevent
 	 *         scroll events from emitting to other drawables.
 	 */
-	default boolean onMouseScroll(int mouseX, int mouseY, int deltaX, int deltaY) {
+	default boolean onMouseScroll(float mouseX, float mouseY, float deltaX, float deltaY) {
 		return false;
 	}
 
@@ -223,7 +223,7 @@ public interface Drawable<T extends Drawable<T>> {
 	 * @param pointY Point Y.
 	 * @return true if the point is located inside this {@link Drawable}.
 	 */
-	default boolean testGeometry(int pointX, int pointY) {
+	default boolean testGeometry(float pointX, float pointY) {
 		if (!isVisible()) return false;
 		int[] geom = new int[4];
 		getComputedGeometry(geom);

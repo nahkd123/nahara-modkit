@@ -16,7 +16,7 @@ import net.minecraft.client.gui.DrawContext;
 public class ScrollProxy extends AbstractDrawable<ScrollProxy> {
 	private Drawable<?> underlying;
 	protected boolean verticalScrollbar = true, horizontalScrollbar = true;
-	protected int scrollX = 0, scrollY = 0;
+	protected float scrollX = 0, scrollY = 0;
 
 	public ScrollProxy(Drawable<?> underlying) {
 		Preconditions.checkNotNull(underlying, "underlying drawable can't be null");
@@ -43,28 +43,28 @@ public class ScrollProxy extends AbstractDrawable<ScrollProxy> {
 		return this;
 	}
 
-	public int getScrollX() { return scrollX; }
+	public float getScrollX() { return scrollX; }
 
-	public void setScrollX(int scrollX) {
+	public void setScrollX(float scrollX) {
 		int[] underlyingGeom = new int[6];
 		underlying.getComputedGeometry(underlyingGeom);
 		this.scrollX = Math.min(Math.max(scrollX, -(underlyingGeom[2] - width)), 0);
 	}
 
-	public ScrollProxy scrollX(int scrollX) {
+	public ScrollProxy scrollX(float scrollX) {
 		setScrollX(scrollX);
 		return this;
 	}
 
-	public int getScrollY() { return scrollY; }
+	public float getScrollY() { return scrollY; }
 
-	public void setScrollY(int scrollY) {
+	public void setScrollY(float scrollY) {
 		int[] underlyingGeom = new int[6];
 		underlying.getComputedGeometry(underlyingGeom);
 		this.scrollY = Math.min(Math.max(scrollY, -(underlyingGeom[3] - height)), 0);
 	}
 
-	public ScrollProxy scrollY(int scrollY) {
+	public ScrollProxy scrollY(float scrollY) {
 		setScrollY(scrollY);
 		return this;
 	}
@@ -78,21 +78,24 @@ public class ScrollProxy extends AbstractDrawable<ScrollProxy> {
 	@Override
 	public void useComputedGeometry(int x, int y, int width, int height, int globalX, int globalY) {
 		super.useComputedGeometry(x, y, width, height, globalX, globalY);
-		underlying.getLayout().applyTo(underlying, width, height, globalX + scrollX, globalY + scrollY);
+		underlying.getLayout().applyTo(underlying, width, height, Math.round(globalX + scrollX),
+			Math.round(globalY + scrollY));
 	}
 
 	@Override
-	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void onRender(DrawContext context, float mouseX, float mouseY, float delta) {
 		int[] underlyingGeom = new int[6];
+		int scrollX = Math.round(getScrollX());
+		int scrollY = Math.round(getScrollY());
 		underlying.getComputedGeometry(underlyingGeom);
 
 		context.getMatrices().push();
-		context.getMatrices().translate(x + getScrollX(), y + getScrollY(), 0);
+		context.getMatrices().translate(x + scrollX, y + scrollY, 0);
 		context.enableScissor(globalX, globalY, globalX + width, globalY + height);
 
 		underlying.onRender(context, mouseX, mouseY, delta);
 
-		context.getMatrices().translate(-getScrollX(), -getScrollY(), 0);
+		context.getMatrices().translate(-scrollX, -scrollY, 0);
 		float scrollXPages = underlyingGeom[2] / (float) width;
 		if (scrollXPages > 1f) {
 			float scrollXLeftProg = (-scrollX) / (float) underlyingGeom[2];
@@ -115,17 +118,12 @@ public class ScrollProxy extends AbstractDrawable<ScrollProxy> {
 			context.fill(width - 2, scrollYTop, width, height - scrollYBottom, 0xFFFFFFFF);
 		}
 
-		if (manager.isDebugging()) {
-			context.drawBorder(underlyingGeom[0], underlyingGeom[1], underlyingGeom[2], underlyingGeom[3], 0xAF00FF00);
-			context.drawBorder(0, 0, width, height, 0xAF0000FF);
-		}
-
 		context.disableScissor();
 		context.getMatrices().pop();
 	}
 
 	@Override
-	public boolean onMouseScroll(int mouseX, int mouseY, int deltaX, int deltaY) {
+	public boolean onMouseScroll(float mouseX, float mouseY, float deltaX, float deltaY) {
 		boolean isInProxy = testGeometry(mouseX, mouseY);
 		if (!isInProxy) return false;
 		if (underlying.onMouseScroll(mouseX, mouseY, deltaX, deltaY)) return true;
@@ -136,21 +134,21 @@ public class ScrollProxy extends AbstractDrawable<ScrollProxy> {
 	}
 
 	@Override
-	public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 		boolean isInProxy = testGeometry(mouseX, mouseY);
 		if (!isInProxy) return false;
 		return underlying.onMouseDown(mouseX - x - scrollX, mouseY - y - scrollY, delta, button);
 	}
 
 	@Override
-	public boolean onMouseMove(int mouseX, int mouseY, float delta) {
+	public boolean onMouseMove(float mouseX, float mouseY, float delta) {
 		boolean isInProxy = testGeometry(mouseX, mouseY);
 		if (!isInProxy) return false;
 		return underlying.onMouseMove(mouseX - x - scrollX, mouseY - y - scrollY, delta);
 	}
 
 	@Override
-	public boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseUp(float mouseX, float mouseY, float delta, int button) {
 		return underlying.onMouseUp(mouseX, mouseY, delta, button);
 	}
 }

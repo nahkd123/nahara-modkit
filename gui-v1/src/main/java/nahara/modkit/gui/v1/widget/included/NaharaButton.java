@@ -75,7 +75,7 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 	}
 
 	@Override
-	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void onRender(DrawContext context, float mouseX, float mouseY, float delta) {
 		Text label = getLabel();
 		boolean hovering = manager.getHovering() == this || manager.getFocus() == this;
 		boolean pressing = isPressing();
@@ -107,7 +107,7 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 	}
 
 	@Override
-	public boolean onMouseMove(int mouseX, int mouseY, float delta) {
+	public boolean onMouseMove(float mouseX, float mouseY, float delta) {
 		if (super.onMouseMove(mouseX, mouseY, delta)) {
 			manager.useHovering(this);
 			return true;
@@ -118,7 +118,7 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 	}
 
 	@Override
-	public boolean onMouseDown(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseDown(float mouseX, float mouseY, float delta, int button) {
 		if (super.onMouseDown(mouseX, mouseY, delta, button)) {
 			manager.useFocus(this);
 			pressing = true;
@@ -131,7 +131,7 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 	}
 
 	@Override
-	public boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
+	public boolean onMouseUp(float mouseX, float mouseY, float delta, int button) {
 		pressing = false;
 		return super.onMouseUp(mouseX, mouseY, delta, button);
 	}

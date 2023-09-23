@@ -35,7 +35,7 @@ public class Box extends AbstractDrawable<Box> {
 	}
 
 	@Override
-	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void onRender(DrawContext context, float mouseX, float mouseY, float delta) {
 		if ((backgroundColor & 0xFF000000) != 0) context.fill(x, y, x + width, y + height, backgroundColor);
 		if ((borderColor & 0xFF000000) != 0) context.drawBorder(x, y, width, height, borderColor);
 	}
