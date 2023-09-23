@@ -200,6 +200,22 @@ public interface Drawable<T extends Drawable<T>> {
 
 	/**
 	 * <p>
+	 * Called when user scrolled while hovering this {@link Drawable}.
+	 * </p>
+	 * 
+	 * @param mouseX User's mouse X position.
+	 * @param mouseY User's mouse Y position.
+	 * @param deltaX Amount of pixels scrolled by user in horizontal.
+	 * @param deltaY Amount of pixels scrolled by user in vertical.
+	 * @return true if this {@link Drawable} can be scrolled and you want to prevent
+	 *         scroll events from emitting to other drawables.
+	 */
+	default boolean onMouseScroll(int mouseX, int mouseY, int deltaX, int deltaY) {
+		return false;
+	}
+
+	/**
+	 * <p>
 	 * Test if the point is inside this {@link Drawable}.
 	 * </p>
 	 * 

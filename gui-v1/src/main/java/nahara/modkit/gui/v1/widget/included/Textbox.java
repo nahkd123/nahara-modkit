@@ -19,7 +19,10 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 
 	public String getContent() { return content; }
 
-	public void setContent(@Nullable String content) { this.content = content == null ? "" : content; }
+	public void setContent(@Nullable String content) {
+		this.content = content == null ? "" : content;
+		cursorFrom(cursorFrom).cursorTo(cursorTo);
+	}
 
 	public Textbox content(String content) {
 		setContent(content);
@@ -58,6 +61,7 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 	@Override
 	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
 		boolean focused = manager.getFocus() == this;
+		boolean underscore = cursorFrom == cursorTo && cursorTo >= getContent().length();
 		int fontHeight = manager.getTextRenderer().fontHeight;
 
 		String beforeSel = getContent().substring(0, Math.min(cursorFrom, cursorTo));
@@ -74,7 +78,7 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 		context.fill(
 			x + 5 - scroll + beforeSelPx, y + (height - fontHeight) / 2 - 1,
 			x + 5 - scroll + beforeSelPx + selectedPx, y + (height + fontHeight) / 2 + 1,
-			0xFFDFDFDF);
+			focused ? 0xFFFFFFFF : 0xFFDFDFDF);
 
 		context.drawText(
 			manager.getTextRenderer(), beforeSel,
@@ -92,10 +96,14 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 			y + (height - fontHeight) / 2 + 1,
 			0xFFFFFF, false);
 
-		context.fill(
+		if (!underscore) context.fill(
 			x + 5 - scroll + cursorOffset, y + (height - fontHeight) / 2 - 1,
 			x + 5 - scroll + cursorOffset + 1, y + (height + fontHeight) / 2 + 1,
-			focused ? (cursorFrom == cursorTo ? 0xFFFFFFFF : 0xFF5F5FFF) : 0x7F7F7F7F);
+			cursorFrom == cursorTo ? (focused ? 0xFFFFFFFF : 0x7FFFFFFF) : 0xFF5F5FFF);
+		else context.fill(
+			x + 5 - scroll + cursorOffset, y + (height + fontHeight) / 2,
+			x + 5 - scroll + cursorOffset + 5, y + (height + fontHeight) / 2 + 1,
+			focused ? 0xFFFFFFFF : 0x7FFFFFFF);
 
 		context.disableScissor();
 	}

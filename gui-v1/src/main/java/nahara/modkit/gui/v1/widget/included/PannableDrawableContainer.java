@@ -5,8 +5,8 @@ import nahara.modkit.gui.v1.widget.Focusable;
 
 /**
  * <p>
- * Like {@link DrawableContainer}, but user can click and drag the container to
- * move its children around by setting its translation.
+ * Like {@link DrawableContainer}, but user can click and drag the container
+ * background to move its children around by setting the container translation.
  * </p>
  */
 public class PannableDrawableContainer extends DrawableContainer implements Focusable<PannableDrawableContainer> {

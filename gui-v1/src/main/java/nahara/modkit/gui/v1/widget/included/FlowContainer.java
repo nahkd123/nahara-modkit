@@ -5,6 +5,19 @@ import nahara.modkit.gui.v1.widget.Drawable;
 import nahara.modkit.gui.v1.widget.Widget;
 import net.minecraft.client.gui.DrawContext;
 
+/**
+ * <p>
+ * Like {@link DrawableContainer}, but its children are placed next to each
+ * other.
+ * </p>
+ * <p>
+ * Child layouts that can affect position like origin or anchor will not have
+ * any effects.
+ * </p>
+ * <p>
+ * Translations will not have any effects in this container.
+ * </p>
+ */
 public class FlowContainer extends DrawableContainer {
 	protected Axis flowAxis = Axis.X;
 
@@ -20,6 +33,21 @@ public class FlowContainer extends DrawableContainer {
 	@Override
 	public FlowContainer add(Drawable<?>... children) {
 		super.add(children);
+		geometryRecomputeNeeded = true;
+		return this;
+	}
+
+	@Override
+	public FlowContainer remove(Drawable<?>... children) {
+		super.remove(children);
+		geometryRecomputeNeeded = true;
+		return this;
+	}
+
+	@Override
+	public FlowContainer insert(int index, Drawable<?> child) {
+		super.insert(index, child);
+		geometryRecomputeNeeded = true;
 		return this;
 	}
 
@@ -28,6 +56,16 @@ public class FlowContainer extends DrawableContainer {
 
 	@Override
 	public int getTranslateY() { return 0; }
+
+	@Override
+	public FlowContainer setTranslateX(int translateX) {
+		return this;
+	}
+
+	@Override
+	public FlowContainer setTranslateY(int translateY) {
+		return this;
+	}
 
 	protected void applyFlow() {
 		int flowPos = 0;

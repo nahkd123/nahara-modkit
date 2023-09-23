@@ -66,6 +66,15 @@ public abstract class NaharaScreen extends Screen implements WidgetsManager {
 	}
 
 	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+		int mX = (int) Math.round(mouseX);
+		int mY = (int) Math.round(mouseY);
+		int sX = (int) Math.round(horizontalAmount * 10d);
+		int sY = (int) Math.round(verticalAmount * 10d);
+		return root.onMouseScroll(mX, mY, sX, sY);
+	}
+
+	@Override
 	public boolean charTyped(char chr, int modifiers) {
 		if (this.focusing != null) this.focusing.onCharacterTyped(chr, modifiers);
 		return super.charTyped(chr, modifiers);

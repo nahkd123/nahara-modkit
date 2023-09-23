@@ -8,6 +8,7 @@ import nahara.modkit.gui.v1.widget.included.DrawableContainer;
 import nahara.modkit.gui.v1.widget.included.FlowContainer;
 import nahara.modkit.gui.v1.widget.included.NaharaButton;
 import nahara.modkit.gui.v1.widget.included.PannableDrawableContainer;
+import nahara.modkit.gui.v1.widget.included.ScrollProxy;
 import nahara.modkit.gui.v1.widget.included.Textbox;
 import net.minecraft.text.Text;
 
@@ -34,13 +35,17 @@ public class ExampleScreen extends NaharaScreen {
 			.add(new NaharaButton().label(Text.literal("")).x(40).y(0).width(50).height(24))
 			.add(new Textbox().content("Hello world!").x(40).y(25).width(100).height(24)
 				.cursorFrom(6).cursorTo(11))
-			.add(new FlowContainer().flowAxis(Axis.Y)
-				.x(0).y(50).width(100).height(100)
+			.add(new ScrollProxy(new FlowContainer().flowAxis(Axis.Y)
+				.x(0).y(0).width(150)
 				.add(
-					new NaharaButton().label(Text.literal("Flow")).width(100).height(24),
+					new NaharaButton().label(Text.literal("Flow")).width(150).height(24),
 					new NaharaButton().label(Text.literal("Container")).width(100).height(24),
 					new NaharaButton().label(Text.literal("My")).width(100).height(24),
-					new NaharaButton().label(Text.literal("Beloved")).width(100).height(24))));
+					new NaharaButton().label(Text.literal("Beloved")).width(100).height(24),
+					new NaharaButton().label(Text.literal("Scroll down")).width(100).height(24),
+					new NaharaButton().label(Text.literal("Test button")).width(100).height(24)))
+				.scrollX(0).scrollY(0)
+				.x(0).y(50).width(100).height(100)));
 
 		var boxThing = new DrawableContainer().x(10).y(10).width(100).height(100);
 		boxThing.add(new NaharaButton() {

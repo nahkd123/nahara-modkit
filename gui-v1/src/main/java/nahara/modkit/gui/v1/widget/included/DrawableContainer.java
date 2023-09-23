@@ -1,6 +1,7 @@
 package nahara.modkit.gui.v1.widget.included;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import nahara.modkit.gui.v1.widget.AbstractDrawable;
@@ -16,17 +17,26 @@ import net.minecraft.client.gui.DrawContext;
  * container, or move its children by moving this container.
  * </p>
  * 
- * @see #getChildren()
  * @see #add(Drawable...)
  */
 public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	protected List<Drawable<?>> children = new ArrayList<>();
 	protected int translateX = 0, translateY = 0;
 
-	public List<Drawable<?>> getChildren() { return children; }
+	public List<Drawable<?>> getReadonlyChildren() { return Collections.unmodifiableList(children); }
 
 	public DrawableContainer add(Drawable<?>... children) {
 		for (Drawable<?> child : children) this.children.add(child);
+		return this;
+	}
+
+	public DrawableContainer remove(Drawable<?>... children) {
+		for (Drawable<?> target : children) this.children.remove(target);
+		return this;
+	}
+
+	public DrawableContainer insert(int index, Drawable<?> child) {
+		this.children.add(index, child);
 		return this;
 	}
 
@@ -128,5 +138,21 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 		}
 
 		return super.onMouseMove(mouseX, mouseY, delta);
+	}
+
+	@Override
+	public boolean onMouseScroll(int mouseX, int mouseY, int deltaX, int deltaY) {
+		boolean isInContainer = testGeometry(mouseX, mouseY);
+		if (isInContainer) {
+			for (int i = children.size() - 1; i >= 0; i--) {
+				Drawable<?> child = children.get(i);
+				if (child.onMouseScroll(mouseX - x - getTranslateX(), mouseY - y - getTranslateY(), deltaX, deltaY))
+					return true;
+			}
+
+			return false;
+		} else {
+			return false;
+		}
 	}
 }
