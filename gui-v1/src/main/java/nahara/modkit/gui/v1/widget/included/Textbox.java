@@ -1,11 +1,15 @@
 package nahara.modkit.gui.v1.widget.included;
 
+import java.util.function.Consumer;
+
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import nahara.modkit.gui.v1.widget.AbstractDrawable;
 import nahara.modkit.gui.v1.widget.Focusable;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Textbox> {
 	{
@@ -245,5 +249,11 @@ public class Textbox extends AbstractDrawable<Textbox> implements Focusable<Text
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public void drawDebugLines(Consumer<Object> debugConsumer) {
+		debugConsumer.accept(Text.literal("Textbox = ")
+			.append(Text.literal(content).styled(s -> s.withColor(Formatting.AQUA))));
 	}
 }

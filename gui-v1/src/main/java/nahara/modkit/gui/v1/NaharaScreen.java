@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import nahara.modkit.gui.v1.widget.Drawable;
 import nahara.modkit.gui.v1.widget.Focusable;
+import nahara.modkit.gui.v1.widget.Widget;
 import nahara.modkit.gui.v1.widget.WidgetsManager;
 import nahara.modkit.gui.v1.widget.included.DrawableContainer;
 import net.minecraft.client.MinecraftClient;
@@ -22,6 +23,10 @@ public abstract class NaharaScreen extends Screen implements WidgetsManager {
 		super(title);
 	}
 
+	protected void add(Drawable<?>... children) {
+		root.add(children);
+	}
+
 	@Override
 	protected void init() {
 		root.useManager(this);
@@ -38,16 +43,59 @@ public abstract class NaharaScreen extends Screen implements WidgetsManager {
 		if (isDebugging()) {
 			int[] geom = new int[6];
 
-			if (hovering != null) {
-				hovering.getComputedGeometry(geom);
-				context.drawBorder(geom[4], geom[5], geom[2], geom[3], 0xFFFF0000);
-			}
+			if (hovering != null) debug$drawBorder(context, hovering, 0xFFFF0000);
+			if (focusing != null && focusing instanceof Drawable dw) debug$drawBorder(context, dw, 0xFF00FF00);
 
 			context.getMatrices().push();
 			context.getMatrices().translate(mouseX, mouseY, 0);
-			context.drawText(textRenderer, "Mouse (" + mouseX + ", " + mouseY + ")", 0, 0, 0xFF0000, true);
+			context.fill(-1, -1, 1, 1, 0xFFFF0000);
+
+			context.getMatrices().translate(4, 8, 0);
+			debug$addText(context, "Mouse (" + mouseX + ", " + mouseY + ")", 0xFFFFFF);
+
+			if (hovering != null) {
+				hovering.getComputedGeometry(geom);
+				boolean hitTest = hovering.testGeometry(mouseX - geom[4] + geom[0], mouseY - geom[5] + geom[1]);
+				debug$addText(context, "Hovering (" + geom[4] + ", " + geom[5] + ") (hitTest = " + hitTest + ")",
+					0xFF0000);
+				context.getMatrices().translate(4, 0, 0);
+				((Widget<?>) hovering).drawDebugLines(obj -> debug$addText(context, obj, 0xFF0000));
+				context.getMatrices().translate(-4, 0, 0);
+			}
+
+			if (focusing != null) {
+				if (focusing instanceof Drawable dw) {
+					dw.getComputedGeometry(geom);
+					boolean hitTest = dw.testGeometry(mouseX - geom[4] + geom[0], mouseY - geom[5] + geom[1]);
+					debug$addText(context, "Focusing (" + geom[4] + ", " + geom[5] + ") (hitTest = " + hitTest + ")",
+						0x00FF00);
+				} else {
+					debug$addText(context, "Focusing:", 0x00FF00);
+				}
+
+				context.getMatrices().translate(4, 0, 0);
+				((Widget<?>) focusing).drawDebugLines(obj -> debug$addText(context, obj, 0x00FF00));
+				context.getMatrices().translate(-4, 0, 0);
+			}
+
 			context.getMatrices().pop();
 		}
+	}
+
+	private void debug$drawBorder(DrawContext context, Drawable<?> drawable, int color) {
+		int[] geom = new int[6];
+		drawable.getComputedGeometry(geom);
+		context.drawBorder(geom[4] - 2, geom[5] - 2, geom[2] + 4, geom[3] + 4, color);
+		// TODO draw anchor + origin
+	}
+
+	private void debug$addText(DrawContext context, Object obj, int color) {
+		if (obj == null) return;
+		Text text = obj instanceof Text t ? t : Text.literal(obj.toString());
+		int width = textRenderer.getWidth(text);
+		context.fill(-1, -1, width + 2, textRenderer.fontHeight - 1, 0xAF000000);
+		context.drawText(textRenderer, text, 0, 0, color, false);
+		context.getMatrices().translate(0, textRenderer.fontHeight, 0);
 	}
 
 	@Override
