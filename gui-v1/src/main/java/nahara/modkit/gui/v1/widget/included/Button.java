@@ -16,7 +16,7 @@ import net.minecraft.text.Text;
  * </p>
  * <p>
  * <b>Listening for clicks:</b> You can listen for clicks by creating an
- * anonymous class of {@link NaharaButton}:
+ * anonymous class of {@link Button}:
  * 
  * <pre>
  * new NaharaButton() {
@@ -36,7 +36,7 @@ import net.minecraft.text.Text;
  * @see #setLabel(Text)
  * @see #setPressed(boolean)
  */
-public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focusable<NaharaButton> {
+public class Button extends AbstractDrawable<Button> implements Focusable<Button> {
 	{
 		width = 100;
 		height = 24;
@@ -50,7 +50,7 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 
 	public void setLabel(Text label) { this.label = label == null ? Text.empty() : label; }
 
-	public NaharaButton label(@Nullable Text label) {
+	public Button label(@Nullable Text label) {
 		setLabel(label);
 		return this;
 	}
@@ -69,7 +69,7 @@ public class NaharaButton extends AbstractDrawable<NaharaButton> implements Focu
 	 */
 	public boolean isPressing() { return pressed || pressing; }
 
-	public NaharaButton pressed(boolean pressed) {
+	public Button pressed(boolean pressed) {
 		this.pressed = pressed;
 		return this;
 	}
