@@ -5,6 +5,7 @@ import nahara.modkit.gui.v1.layout.Anchor;
 import nahara.modkit.gui.v1.layout.Axis;
 import nahara.modkit.gui.v1.widget.included.Box;
 import nahara.modkit.gui.v1.widget.included.Button;
+import nahara.modkit.gui.v1.widget.included.Checkbox;
 import nahara.modkit.gui.v1.widget.included.DrawableContainer;
 import nahara.modkit.gui.v1.widget.included.FlowContainer;
 import nahara.modkit.gui.v1.widget.included.Slider;
@@ -24,7 +25,9 @@ public class ExampleScreen extends NaharaScreen {
 			new Textbox().content("Hello World!").x(0).width(100).height(24),
 			new Textbox().content("Hello World!").x(0).width(100).height(14),
 			new Slider().value(0.5f).x(0).width(100).height(24),
-			new Slider().value(0.25f).x(0).width(100).height(14)));
+			new Slider().value(0.25f).x(0).width(100).height(14),
+			new Checkbox().x(0).width(100).height(24),
+			new Checkbox().x(0).width(100).height(14)));
 
 		var layoutDemo = new DrawableContainer().x(108).y(12).width(100).height(100);
 		for (Anchor pos : Anchor.values()) {
