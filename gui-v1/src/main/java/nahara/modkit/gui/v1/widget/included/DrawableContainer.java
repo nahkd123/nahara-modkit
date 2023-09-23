@@ -68,7 +68,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	@Override
 	public void onRender(DrawContext context, int mouseX, int mouseY, float delta) {
 		context.getMatrices().push();
-		context.getMatrices().translate(x + translateX, y + translateY, 0);
+		context.getMatrices().translate(x + getTranslateX(), y + getTranslateY(), 0);
 		context.enableScissor(globalX, globalY, globalX + width, globalY + height);
 
 		for (Drawable<?> child : children) {
@@ -79,7 +79,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 		}
 
 		if (manager.isDebugging()) {
-			context.getMatrices().translate(-translateX, -translateY, 0);
+			context.getMatrices().translate(-getTranslateX(), -getTranslateY(), 0);
 			context.drawBorder(0, 0, width, height, 0xAFFF0000);
 		}
 
@@ -91,7 +91,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	public boolean onMouseMove(int mouseX, int mouseY, float delta) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			Drawable<?> child = children.get(i);
-			if (child.onMouseMove(mouseX - x - translateX, mouseY - y - translateY, delta)) return true;
+			if (child.onMouseMove(mouseX - x - getTranslateX(), mouseY - y - getTranslateY(), delta)) return true;
 		}
 
 		if (super.onMouseMove(mouseX, mouseY, delta)) {
@@ -110,7 +110,8 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 		if (isInContainer) {
 			for (int i = children.size() - 1; i >= 0; i--) {
 				Drawable<?> child = children.get(i);
-				if (child.onMouseDown(mouseX - x - translateX, mouseY - y - translateY, delta, button)) return true;
+				if (child.onMouseDown(mouseX - x - getTranslateX(), mouseY - y - getTranslateY(), delta, button))
+					return true;
 			}
 
 			return true;
@@ -123,7 +124,7 @@ public class DrawableContainer extends AbstractDrawable<DrawableContainer> {
 	public boolean onMouseUp(int mouseX, int mouseY, float delta, int button) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			Drawable<?> child = children.get(i);
-			if (child.onMouseUp(mouseX - x - translateX, mouseY - y - translateY, delta, button)) return true;
+			if (child.onMouseUp(mouseX - x - getTranslateX(), mouseY - y - getTranslateY(), delta, button)) return true;
 		}
 
 		return super.onMouseMove(mouseX, mouseY, delta);

@@ -5,6 +5,7 @@ import nahara.modkit.gui.v1.layout.Anchor;
 import nahara.modkit.gui.v1.layout.Axis;
 import nahara.modkit.gui.v1.widget.included.Box;
 import nahara.modkit.gui.v1.widget.included.DrawableContainer;
+import nahara.modkit.gui.v1.widget.included.FlowContainer;
 import nahara.modkit.gui.v1.widget.included.NaharaButton;
 import nahara.modkit.gui.v1.widget.included.PannableDrawableContainer;
 import nahara.modkit.gui.v1.widget.included.Textbox;
@@ -32,7 +33,14 @@ public class ExampleScreen extends NaharaScreen {
 				.layout(layout -> layout.setFillAxes(Axis.Y)))
 			.add(new NaharaButton().label(Text.literal("")).x(40).y(0).width(50).height(24))
 			.add(new Textbox().content("Hello world!").x(40).y(25).width(100).height(24)
-				.cursorFrom(6).cursorTo(11)));
+				.cursorFrom(6).cursorTo(11))
+			.add(new FlowContainer().flowAxis(Axis.Y)
+				.x(0).y(50).width(100).height(100)
+				.add(
+					new NaharaButton().label(Text.literal("Flow")).width(100).height(24),
+					new NaharaButton().label(Text.literal("Container")).width(100).height(24),
+					new NaharaButton().label(Text.literal("My")).width(100).height(24),
+					new NaharaButton().label(Text.literal("Beloved")).width(100).height(24))));
 
 		var boxThing = new DrawableContainer().x(10).y(10).width(100).height(100);
 		boxThing.add(new NaharaButton() {

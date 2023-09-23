@@ -32,6 +32,11 @@ public class Layout {
 		return this;
 	}
 
+	public boolean hasFillAxis(Axis axis) {
+		for (Axis fillAxis : fillAxes) if (fillAxis == axis) return true;
+		return false;
+	}
+
 	public void applyTo(Drawable<?> drawable, int parentWidth, int parentHeight, int parentGlobalX, int parentGlobalY) {
 		boolean fillAxisX = false, fillAxisY = false;
 
